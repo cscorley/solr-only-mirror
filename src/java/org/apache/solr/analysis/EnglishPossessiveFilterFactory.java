@@ -1,3 +1,5 @@
+package org.apache.solr.analysis;
+
 /**
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
@@ -15,24 +17,12 @@
  * limitations under the License.
  */
 
-package org.apache.solr.analysis;
-
-import java.util.Map;
-
 import org.apache.lucene.analysis.TokenStream;
-import org.apache.lucene.analysis.standard.StandardFilter;
+import org.apache.lucene.analysis.en.EnglishPossessiveFilter;
 
-/**
- * @version $Id$
- */
-public class StandardFilterFactory extends BaseTokenFilterFactory {
-  @Override
-  public void init(Map<String,String> args) {
-    super.init(args);
-    assureMatchVersion();
-  }
-  
-  public StandardFilter create(TokenStream input) {
-    return new StandardFilter(luceneMatchVersion, input);
+/** Factory for {@link EnglishPossessiveFilter} */
+public class EnglishPossessiveFilterFactory extends BaseTokenFilterFactory {
+  public TokenStream create(TokenStream input) {
+    return new EnglishPossessiveFilter(input);
   }
 }

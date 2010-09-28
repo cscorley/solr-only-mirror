@@ -17,22 +17,24 @@
 
 package org.apache.solr.analysis;
 
-import java.util.Map;
+import org.apache.lucene.analysis.Tokenizer;
+import org.apache.lucene.analysis.standard.ClassicTokenizer;
 
-import org.apache.lucene.analysis.TokenStream;
-import org.apache.lucene.analysis.standard.StandardFilter;
+import java.io.Reader;
+import java.util.Map;
 
 /**
  * @version $Id$
  */
-public class StandardFilterFactory extends BaseTokenFilterFactory {
+
+public class ClassicTokenizerFactory extends BaseTokenizerFactory {
   @Override
   public void init(Map<String,String> args) {
     super.init(args);
     assureMatchVersion();
   }
-  
-  public StandardFilter create(TokenStream input) {
-    return new StandardFilter(luceneMatchVersion, input);
+
+  public Tokenizer create(Reader input) {
+    return new ClassicTokenizer(luceneMatchVersion, input);
   }
 }
