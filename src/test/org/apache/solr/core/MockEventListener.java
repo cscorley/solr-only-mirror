@@ -1,6 +1,3 @@
-package org.apache.solr.analysis;
-
-
 /**
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
@@ -17,35 +14,36 @@ package org.apache.solr.analysis;
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package org.apache.solr.core;
 
+import org.apache.solr.search.SolrIndexSearcher;
+import org.apache.solr.common.util.NamedList;
 
+import java.util.concurrent.atomic.AtomicInteger;
 
-import org.apache.lucene.analysis.standard.StandardAnalyzer;
-import org.apache.lucene.analysis.standard.UAX29URLEmailTokenizer;
+public class MockEventListener implements SolrEventListener {
 
-import java.io.Reader;
-import java.util.Map;
+  final static AtomicInteger createCounter = new AtomicInteger(0);
 
-/**
- * @version $Id$
- * 
- */
-
-public class UAX29URLEmailTokenizerFactory extends BaseTokenizerFactory {
-
-  private int maxTokenLength;
-
-  @Override
-  public void init(Map<String,String> args) {
-    super.init(args);
-    assureMatchVersion();
-    maxTokenLength = getInt("maxTokenLength",
-                            StandardAnalyzer.DEFAULT_MAX_TOKEN_LENGTH);
+  public static final int getCreateCount() {
+    return createCounter.intValue();
   }
 
-  public UAX29URLEmailTokenizer create(Reader input) {
-    UAX29URLEmailTokenizer tokenizer = new UAX29URLEmailTokenizer(input); 
-    tokenizer.setMaxTokenLength(maxTokenLength);
-    return tokenizer;
+  public MockEventListener() {
+    createCounter.incrementAndGet();
   }
+
+  public void init(NamedList args) {
+    /* NOOP */
+  }
+
+  public void postCommit() {
+    /* NOOP */
+  }
+
+  public void newSearcher(SolrIndexSearcher newSearcher, 
+                          SolrIndexSearcher currentSearcher) {
+    /* NOOP */
+  }
+
 }
