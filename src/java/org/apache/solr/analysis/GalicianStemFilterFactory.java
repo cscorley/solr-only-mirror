@@ -1,3 +1,5 @@
+package org.apache.solr.analysis;
+
 /**
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
@@ -15,23 +17,12 @@
  * limitations under the License.
  */
 
-package org.apache.solr.search;
+import org.apache.lucene.analysis.TokenStream;
+import org.apache.lucene.analysis.gl.GalicianStemFilter;
 
-import org.apache.lucene.search.DefaultSimilarity;
-
-import java.util.HashMap;
-
-/**
- */
-// don't make it public for now... easier to change later.
-
-// This class is currently unused.
-class SolrSimilarity extends DefaultSimilarity {
-  private final HashMap<String,Float> lengthNormConfig = new HashMap<String,Float>();
-
-  public float lengthNorm(String fieldName, int numTerms) {
-    // Float f = lengthNormConfig.
-    // if (lengthNormDisabled.)
-    return super.lengthNorm(fieldName, numTerms);
+/** Factory for {@link GalicianStemFilter} */
+public class GalicianStemFilterFactory extends BaseTokenFilterFactory {
+  public TokenStream create(TokenStream input) {
+    return new GalicianStemFilter(input);
   }
 }
