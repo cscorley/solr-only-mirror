@@ -86,7 +86,7 @@ public abstract class SolrTestCaseJ4 extends LuceneTestCase {
   /** Call initCore in @BeforeClass to instantiate a solr core in your test class.
    * deleteCore will be called for you via SolrTestCaseJ4 @AfterClass */
   public static void initCore(String config, String schema) throws Exception {
-    initCore(config, schema, TEST_HOME);
+    initCore(config, schema, TEST_HOME());
   }
 
   /** Call initCore in @BeforeClass to instantiate a solr core in your test class.
@@ -722,6 +722,7 @@ public abstract class SolrTestCaseJ4 extends LuceneTestCase {
   }
 
   public static final IRange ZERO_ONE = new IRange(0,1);
+  public static final IRange ZERO_TWO = new IRange(0,2);
   public static final IRange ONE_ONE = new IRange(1,1);
 
   public static class Doc implements Comparable{
@@ -1040,6 +1041,29 @@ public abstract class SolrTestCaseJ4 extends LuceneTestCase {
     return out.toString();
   }
 
+  /** Return a Map from field value to a list of document ids */
+  Map<Comparable, List<Comparable>> invertField(Map<Comparable, Doc> model, String field) {
+    Map<Comparable, List<Comparable>> value_to_id = new HashMap<Comparable, List<Comparable>>();
+
+    // invert field
+    for (Comparable key : model.keySet()) {
+      Doc doc = model.get(key);
+      List<Comparable> vals = doc.getValues(field);
+      if (vals == null) continue;
+      for (Comparable val : vals) {
+        List<Comparable> ids = value_to_id.get(val);
+        if (ids == null) {
+          ids = new ArrayList<Comparable>(2);
+          value_to_id.put(val, ids);
+        }
+        ids.add(key);
+      }
+    }
+
+    return value_to_id;
+  }
+
+
   /** Gets a resource from the context classloader as {@link File}. This method should only be used,
    * if a real file is needed. To get a stream, code should prefer
    * {@link Class#getResourceAsStream} using {@code this.getClass()}.
@@ -1057,22 +1081,8 @@ public abstract class SolrTestCaseJ4 extends LuceneTestCase {
     }
   }
   
-  private static final String SOURCE_HOME = determineSourceHome();
-  public static String TEST_HOME = getFile("solr/conf").getParent();
-  public static String WEBAPP_HOME = new File(SOURCE_HOME, "src/webapp/web").getAbsolutePath();
-  public static String EXAMPLE_HOME = new File(SOURCE_HOME, "example/solr").getAbsolutePath();
-  public static String EXAMPLE_MULTICORE_HOME = new File(SOURCE_HOME, "example/multicore").getAbsolutePath();
-  public static String EXAMPLE_SCHEMA=EXAMPLE_HOME+"/conf/schema.xml";
-  public static String EXAMPLE_CONFIG=EXAMPLE_HOME+"/conf/solrconfig.xml";
-  
-  static String determineSourceHome() {
-    // ugly, ugly hack to determine the example home without depending on the CWD
-    // this is needed for example/multicore tests which reside outside the classpath
-    File base = getFile("solr/conf/").getAbsoluteFile();
-    while (!new File(base, "solr/CHANGES.txt").exists()) {
-      base = base.getParentFile();
-    }
-    return new File(base, "solr/").getAbsolutePath();
+  public static String TEST_HOME() {
+    return getFile("solr/conf").getParent();
   }
 
   public static Throwable getRootCause(Throwable t) {
