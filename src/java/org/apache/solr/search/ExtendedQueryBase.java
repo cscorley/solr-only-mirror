@@ -14,47 +14,61 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.solr.search;
 
-public class MutableValueBool extends MutableValue {
-  public boolean value;
+import org.apache.lucene.search.Query;
+
+public class ExtendedQueryBase extends Query implements ExtendedQuery {
+  private int cost;
+  private boolean cache = true;
+  private boolean cacheSep;
 
   @Override
-  public Object toObject() {
-    return exists ? value : null;
+  public void setCache(boolean cache) {
+    this.cache = cache;
   }
 
   @Override
-  public void copy(MutableValue source) {
-    MutableValueBool s = (MutableValueBool) source;
-    value = s.value;
-    exists = s.exists;
+  public boolean getCache() {
+    return cache;
   }
 
   @Override
-  public MutableValue duplicate() {
-    MutableValueBool v = new MutableValueBool();
-    v.value = this.value;
-    v.exists = this.exists;
-    return v;
+  public void setCacheSep(boolean cacheSep) {
+    this.cacheSep = cacheSep;
   }
 
   @Override
-  public boolean equalsSameType(Object other) {
-    MutableValueBool b = (MutableValueBool)other;
-    return value == b.value && exists == b.exists;
+  public boolean getCacheSep() {
+    return cacheSep;
   }
 
   @Override
-  public int compareSameType(Object other) {
-    MutableValueBool b = (MutableValueBool)other;
-    if (value != b.value) return value ? 1 : 0;
-    if (exists == b.exists) return 0;
-    return exists ? 1 : -1;
+  public void setCost(int cost) {
+    this.cost = cost;
+  }
+
+  public int getCost() {
+    return cost;
+  }
+
+  public String getOptions() {
+    StringBuilder sb = new StringBuilder();
+    if (!cache) {
+      sb.append("{!cache=false");
+      sb.append(" cost=");
+      sb.append(cost);
+      sb.append("}");
+    } else if (cacheSep) {
+      sb.append("{!cache=sep");
+      sb.append("}");
+    }
+    return sb.toString();
   }
 
   @Override
-  public int hashCode() {
-    return value ? 2 : (exists ? 1 : 0);
+  public String toString(String field) {
+    return getOptions();
   }
 }
