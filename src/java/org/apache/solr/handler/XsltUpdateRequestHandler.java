@@ -17,8 +17,7 @@
 
 package org.apache.solr.handler;
 
-import javax.xml.stream.XMLInputFactory;
-
+import org.apache.solr.common.params.SolrParams;
 import org.apache.solr.common.util.NamedList;
 import org.apache.solr.common.util.XMLErrorLogger;
 import org.apache.solr.request.SolrQueryRequest;
@@ -26,30 +25,23 @@ import org.apache.solr.update.processor.UpdateRequestProcessor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.xml.stream.XMLInputFactory;
+
 /**
- * Add documents to solr using the STAX XML parser.
+ * Add documents to solr using the STAX XML parser, transforming it with XSLT first
  */
-public class XmlUpdateRequestHandler extends ContentStreamHandlerBase {
-  public static Logger log = LoggerFactory.getLogger(XmlUpdateRequestHandler.class);
-  private static final XMLErrorLogger xmllog = new XMLErrorLogger(log);
+public class XsltUpdateRequestHandler extends ContentStreamHandlerBase {
+  public static Logger log = LoggerFactory.getLogger(XsltUpdateRequestHandler.class);
+  public static final XMLErrorLogger xmllog = new XMLErrorLogger(log);
 
   public static final String UPDATE_PROCESSOR = "update.processor";
 
-  // XML Constants
-  public static final String ADD = "add";
-  public static final String DELETE = "delete";
-  public static final String OPTIMIZE = "optimize";
-  public static final String COMMIT = "commit";
-  public static final String ROLLBACK = "rollback";
-  public static final String WAIT_SEARCHER = "waitSearcher";
-  public static final String SOFT_COMMIT = "softCommit";
 
-  public static final String OVERWRITE = "overwrite";
-  public static final String COMMIT_WITHIN = "commitWithin";
-
+  public static final int XSLT_CACHE_DEFAULT = 60;
+  private static final String XSLT_CACHE_PARAM = "xsltCacheLifetimeSeconds"; 
 
   XMLInputFactory inputFactory;
-
+  private Integer xsltCacheLifetimeSeconds;
 
   @Override
   public void init(NamedList args) {
@@ -71,18 +63,22 @@ public class XmlUpdateRequestHandler extends ContentStreamHandlerBase {
       log.debug("Unable to set the 'reuse-instance' property for the input chain: " + inputFactory);
     }
     inputFactory.setXMLReporter(xmllog);
+    
+    final SolrParams p = SolrParams.toSolrParams(args);
+    this.xsltCacheLifetimeSeconds = p.getInt(XSLT_CACHE_PARAM,XSLT_CACHE_DEFAULT);
+    log.info("xsltCacheLifetimeSeconds=" + xsltCacheLifetimeSeconds);
   }
 
   @Override
   protected ContentStreamLoader newLoader(SolrQueryRequest req, UpdateRequestProcessor processor) {
-    return new XMLLoader(processor, inputFactory);
+    return new XsltXMLLoader(processor, inputFactory, xsltCacheLifetimeSeconds);
   }
 
   //////////////////////// SolrInfoMBeans methods //////////////////////
 
   @Override
   public String getDescription() {
-    return "Add documents with XML";
+    return "Add documents with XML, transforming with XSLT first";
   }
 
   @Override
@@ -99,7 +95,6 @@ public class XmlUpdateRequestHandler extends ContentStreamHandlerBase {
   public String getSource() {
     return "$URL$";
   }
+
+
 }
-
-
-

@@ -1,3 +1,5 @@
+package org.apache.solr.update;
+
 /**
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
@@ -15,30 +17,20 @@
  * limitations under the License.
  */
 
-package org.apache.solr.search.function;
+import java.io.IOException;
 
-import org.apache.lucene.queries.function.DocValues;
-import org.apache.lucene.queries.function.ValueSource;
+import org.apache.lucene.index.IndexWriter;
 
-/**
- * <code>ProductFloatFunction</code> returns the product of it's components.
- */
-public class ProductFloatFunction extends MultiFloatFunction {
-  public ProductFloatFunction(ValueSource[] sources) {
-    super(sources);
-  }
+public interface IndexWriterProvider {
+  
+  public void newIndexWriter() throws IOException;
+  
+  public IndexWriter getIndexWriter() throws IOException;
 
-  @Override
-  protected String name() {
-    return "product";
-  }
+  public void decref() throws IOException;
+  
+  public void incref();
 
-  @Override
-  protected float func(int doc, DocValues[] valsArr) {
-    float val = 1.0f;
-    for (DocValues vals : valsArr) {
-      val *= vals.floatVal(doc);
-    }
-    return val;
-  }
+  public void rollbackIndexWriter() throws IOException;
+  
 }
