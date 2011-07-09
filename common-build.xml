@@ -46,6 +46,7 @@
   <property name="javadoc.link" value="http://java.sun.com/javase/6/docs/api/"/>
   <property name="tests.loggingfile" value="${common-solr.dir}/testlogging.properties"/>
   <property name="tests.threadspercpu" value="2"/>
+  <property name="tests.cleanthreads.sysprop" value="perClass"/>
 
   <path id="additional.dependencies">
   	<fileset dir="${common-solr.dir}/lib" includes="**/*.jar"/>
