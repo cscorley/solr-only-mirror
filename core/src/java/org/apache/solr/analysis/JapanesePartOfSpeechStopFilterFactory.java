@@ -22,25 +22,25 @@ import java.util.HashSet;
 import java.util.Set;
 
 import org.apache.lucene.analysis.TokenStream;
-import org.apache.lucene.analysis.kuromoji.KuromojiPartOfSpeechStopFilter;
+import org.apache.lucene.analysis.ja.JapanesePartOfSpeechStopFilter;
 import org.apache.lucene.analysis.util.CharArraySet;
 import org.apache.solr.common.ResourceLoader;
 import org.apache.solr.util.plugin.ResourceLoaderAware;
 
 /**
- * Factory for {@link KuromojiPartOfSpeechStopFilter}.  
+ * Factory for {@link org.apache.lucene.analysis.ja.JapanesePartOfSpeechStopFilter}.
  * <pre class="prettyprint">
  * &lt;fieldType name="text_ja" class="solr.TextField"&gt;
  *   &lt;analyzer&gt;
- *     &lt;tokenizer class="solr.KuromojiTokenizerFactory"/&gt;
- *     &lt;filter class="solr.KuromojiPartOfSpeechStopFilterFactory" 
+ *     &lt;tokenizer class="solr.JapaneseTokenizerFactory"/&gt;
+ *     &lt;filter class="solr.JapanesePartOfSpeechStopFilterFactory"
  *             tags="stopTags.txt" 
  *             enablePositionIncrements="true"/&gt;
  *   &lt;/analyzer&gt;
  * &lt;/fieldType&gt;
  * </pre>
  */
-public class KuromojiPartOfSpeechStopFilterFactory extends BaseTokenFilterFactory implements ResourceLoaderAware  {
+public class JapanesePartOfSpeechStopFilterFactory extends BaseTokenFilterFactory implements ResourceLoaderAware  {
   private boolean enablePositionIncrements;
   private Set<String> stopTags;
 
@@ -60,6 +60,6 @@ public class KuromojiPartOfSpeechStopFilterFactory extends BaseTokenFilterFactor
   }
 
   public TokenStream create(TokenStream stream) {
-    return new KuromojiPartOfSpeechStopFilter(enablePositionIncrements, stream, stopTags);
+    return new JapanesePartOfSpeechStopFilter(enablePositionIncrements, stream, stopTags);
   }
 }

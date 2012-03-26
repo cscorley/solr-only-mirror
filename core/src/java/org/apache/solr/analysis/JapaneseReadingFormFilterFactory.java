@@ -18,23 +18,23 @@ package org.apache.solr.analysis;
  */
 
 import org.apache.lucene.analysis.TokenStream;
-import org.apache.lucene.analysis.kuromoji.KuromojiReadingFormFilter;
+import org.apache.lucene.analysis.ja.JapaneseReadingFormFilter;
 
 import java.util.Map;
 
 /**
- * Factory for {@link KuromojiReadingFormFilter}.
+ * Factory for {@link org.apache.lucene.analysis.ja.JapaneseReadingFormFilter}.
  * <pre class="prettyprint">
  * &lt;fieldType name="text_ja" class="solr.TextField"&gt;
  *   &lt;analyzer&gt;
- *     &lt;tokenizer class="solr.KuromojiTokenizerFactory"/&gt;
- *     &lt;filter class="solr.KuromojiReadingFormFilterFactory"
+ *     &lt;tokenizer class="solr.JapaneseTokenizerFactory"/&gt;
+ *     &lt;filter class="solr.JapaneseReadingFormFilterFactory"
  *             useRomaji="false"/&gt;
  *   &lt;/analyzer&gt;
  * &lt;/fieldType&gt;
  * </pre>
  */
-public class KuromojiReadingFormFilterFactory extends BaseTokenFilterFactory {
+public class JapaneseReadingFormFilterFactory extends BaseTokenFilterFactory {
   private static final String ROMAJI_PARAM = "useRomaji";
   private boolean useRomaji;
   
@@ -45,6 +45,6 @@ public class KuromojiReadingFormFilterFactory extends BaseTokenFilterFactory {
   }
 
   public TokenStream create(TokenStream input) {
-    return new KuromojiReadingFormFilter(input, useRomaji);
+    return new JapaneseReadingFormFilter(input, useRomaji);
   }
 }

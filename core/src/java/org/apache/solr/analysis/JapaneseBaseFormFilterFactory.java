@@ -18,23 +18,23 @@ package org.apache.solr.analysis;
  */
 
 import org.apache.lucene.analysis.TokenStream;
-import org.apache.lucene.analysis.kuromoji.KuromojiBaseFormFilter;
+import org.apache.lucene.analysis.ja.JapaneseBaseFormFilter;
 
 /**
- * Factory for {@link KuromojiBaseFormFilter}.  
+ * Factory for {@link org.apache.lucene.analysis.ja.JapaneseBaseFormFilter}.
  * <pre class="prettyprint">
  * &lt;fieldType name="text_ja" class="solr.TextField"&gt;
  *   &lt;analyzer&gt;
- *     &lt;tokenizer class="solr.KuromojiTokenizerFactory"/&gt;
- *     &lt;filter class="solr.KuromojiBaseFormFilterFactory"/&gt;
+ *     &lt;tokenizer class="solr.JapaneseTokenizerFactory"/&gt;
+ *     &lt;filter class="solr.JapaneseBaseFormFilterFactory"/&gt;
  *   &lt;/analyzer&gt;
  * &lt;/fieldType&gt;
  * </pre>
  */
-public class KuromojiBaseFormFilterFactory extends BaseTokenFilterFactory {
+public class JapaneseBaseFormFilterFactory extends BaseTokenFilterFactory {
 
   @Override
   public TokenStream create(TokenStream input) {
-    return new KuromojiBaseFormFilter(input);
+    return new JapaneseBaseFormFilter(input);
   }
 }

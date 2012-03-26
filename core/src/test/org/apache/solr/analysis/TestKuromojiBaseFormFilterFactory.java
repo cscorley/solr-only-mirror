@@ -24,15 +24,15 @@ import org.apache.lucene.analysis.TokenStream;
 import org.apache.solr.core.SolrResourceLoader;
 
 /**
- * Simple tests for {@link KuromojiBaseFormFilterFactory}
+ * Simple tests for {@link JapaneseBaseFormFilterFactory}
  */
 public class TestKuromojiBaseFormFilterFactory extends BaseTokenTestCase {
   public void testBasics() throws IOException {
-    KuromojiTokenizerFactory tokenizerFactory = new KuromojiTokenizerFactory();
+    JapaneseTokenizerFactory tokenizerFactory = new JapaneseTokenizerFactory();
     tokenizerFactory.init(DEFAULT_VERSION_PARAM);
     tokenizerFactory.inform(new SolrResourceLoader(null, null));
     TokenStream ts = tokenizerFactory.create(new StringReader("それはまだ実験段階にあります"));
-    KuromojiBaseFormFilterFactory factory = new KuromojiBaseFormFilterFactory();
+    JapaneseBaseFormFilterFactory factory = new JapaneseBaseFormFilterFactory();
     ts = factory.create(ts);
     assertTokenStreamContents(ts,
         new String[] { "それ", "は", "まだ", "実験", "段階", "に", "ある", "ます"  }

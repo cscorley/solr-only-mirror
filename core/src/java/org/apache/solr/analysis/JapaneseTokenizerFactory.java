@@ -27,31 +27,30 @@ import java.util.Locale;
 import java.util.Map;
 
 import org.apache.lucene.analysis.Tokenizer;
-import org.apache.lucene.analysis.kuromoji.KuromojiTokenizer;
-import org.apache.lucene.analysis.kuromoji.KuromojiTokenizer.Mode;
-import org.apache.lucene.analysis.kuromoji.dict.UserDictionary;
+import org.apache.lucene.analysis.ja.JapaneseTokenizer;
+import org.apache.lucene.analysis.ja.JapaneseTokenizer.Mode;
+import org.apache.lucene.analysis.ja.dict.UserDictionary;
 import org.apache.lucene.util.IOUtils;
-import org.apache.solr.analysis.BaseTokenizerFactory;
 import org.apache.solr.common.ResourceLoader;
 import org.apache.solr.common.SolrException;
 import org.apache.solr.util.plugin.ResourceLoaderAware;
 
 /**
- * Factory for {@link KuromojiTokenizer}.  
+ * Factory for {@link org.apache.lucene.analysis.ja.JapaneseTokenizer}.
  * <pre class="prettyprint">
  * &lt;fieldType name="text_ja" class="solr.TextField"&gt;
  *   &lt;analyzer&gt;
- *     &lt;tokenizer class="solr.KuromojiTokenizerFactory"
+ *     &lt;tokenizer class="solr.JapaneseTokenizerFactory"
  *       mode=NORMAL
  *       user-dictionary=user.txt
  *       user-dictionary-encoding=UTF-8
  *     /&gt;
- *     &lt;filter class="solr.KuromojiBaseFormFilterFactory"/&gt;
+ *     &lt;filter class="solr.JapaneseBaseFormFilterFactory"/&gt;
  *   &lt;/analyzer&gt;
  * &lt;/fieldType&gt;
  * </pre>
  */
-public class KuromojiTokenizerFactory extends BaseTokenizerFactory implements ResourceLoaderAware {
+public class JapaneseTokenizerFactory extends BaseTokenizerFactory implements ResourceLoaderAware {
   private static final String MODE = "mode";
   
   private static final String USER_DICT_PATH = "user-dictionary";
@@ -87,7 +86,7 @@ public class KuromojiTokenizerFactory extends BaseTokenizerFactory implements Re
   
   @Override
   public Tokenizer create(Reader input) {
-    return new KuromojiTokenizer(input, userDictionary, true, mode);
+    return new JapaneseTokenizer(input, userDictionary, true, mode);
   }
   
   private Mode getMode(Map<String, String> args) {
@@ -95,7 +94,7 @@ public class KuromojiTokenizerFactory extends BaseTokenizerFactory implements Re
     if (mode != null) {
       return Mode.valueOf(mode.toUpperCase(Locale.ENGLISH));
     } else {
-      return KuromojiTokenizer.DEFAULT_MODE;
+      return JapaneseTokenizer.DEFAULT_MODE;
     }
   }
 }
