@@ -15,15 +15,24 @@
     See the License for the specific language governing permissions and
     limitations under the License.
  -->
-<project name="solr-core" default="default">
-  <description>Solr Core</description>
+<project name="solr-example-DIH" default="resolve">
+  <description>Solr Example-DIH</description>
 
-  <!-- hackidty-hack-hack -->
+  <property name="ivy.retrieve.pattern" value="${example}/example-DIH/solr/db/lib/[artifact]-[revision].[ext]"/>
 
-  <property name="ivy.retrieve.pattern" value="${common-solr.dir}/lib/[artifact]-[revision].[ext]"/>
+  <import file="../../common-build.xml"/>
 
-  <import file="../common-build.xml"/>
+  <!-- example tests are currently elsewhere -->
+  <target name="test"/>
 
-  <target name="compile-core" depends="compile-solrj,common-solr.compile-core"/>
+  <!-- this module has no javadocs -->
+  <target name="javadocs"/>
+
+  <!-- this module has no jar either -->
+  <target name="jar-core"/>
+
+  <!-- nothing to compile -->
+  <target name="compile-core"/>
+  <target name="compile-test"/>
 
 </project>
