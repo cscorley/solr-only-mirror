@@ -1,3 +1,5 @@
+package org.apache.solr.handler.clustering.carrot2;
+
 /**
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
@@ -14,38 +16,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.solr.response.transform;
 
-import org.apache.solr.common.SolrDocument;
-import org.apache.solr.request.SolrQueryRequest;
+import org.carrot2.core.LanguageCode;
+import org.carrot2.text.linguistic.IStemmer;
+import org.carrot2.text.linguistic.IStemmerFactory;
 
-/**
- * Simple Augmenter that adds the score
- *
- *
- * @since solr 4.0
- */
-public class ScoreAugmenter extends TransformerWithContext
-{
-  final String name;
-
-  public ScoreAugmenter( String display )
-  {
-    this.name = display;
-  }
-
+public class DuplicatingStemmerFactory implements IStemmerFactory {
   @Override
-  public String getName()
-  {
-    return name;
-  }
-
-  @Override
-  public void transform(SolrDocument doc, int docid) {
-    if( context != null && context.wantsScores ) {
-      if( context.iterator != null ) {
-        doc.setField( name, context.iterator.score() );
+  public IStemmer getStemmer(LanguageCode language) {
+    return new IStemmer() {
+      @Override
+      public CharSequence stem(CharSequence word) {
+        return word.toString() + word.toString();
       }
-    }
+    };
   }
 }
