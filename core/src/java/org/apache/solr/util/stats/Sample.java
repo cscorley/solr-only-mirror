@@ -15,26 +15,39 @@
  * limitations under the License.
  */
 
-package org.apache.solr.request;
+/*
+ * Forked from https://github.com/codahale/metrics
+ */
 
-import javax.servlet.ServletRequest;
-
-import org.apache.solr.common.params.MultiMapSolrParams;
+package org.apache.solr.util.stats;
 
 /**
- *
+ * A statistically representative sample of a data stream.
  */
-public class ServletSolrParams extends MultiMapSolrParams {
-  public ServletSolrParams(ServletRequest req) {
-    super(req.getParameterMap());
-  }
+public interface Sample {
+  /**
+   * Clears all recorded values.
+   */
+  void clear();
 
-  @Override
-  public String get(String name) {
-    String[] arr = map.get(name);
-    if (arr==null) return null;
-    String s = arr[0];
-    if (s.length()==0) return null;  // screen out blank parameters
-    return s;
-  }
+  /**
+   * Returns the number of values recorded.
+   *
+   * @return the number of values recorded
+   */
+  int size();
+
+  /**
+   * Adds a new recorded value to the sample.
+   *
+   * @param value a new recorded value
+   */
+  void update(long value);
+
+  /**
+   * Returns a snapshot of the sample's values.
+   *
+   * @return a snapshot of the sample's values
+   */
+  Snapshot getSnapshot();
 }
