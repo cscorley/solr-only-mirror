@@ -1,4 +1,4 @@
-package org.apache.solr.store.hdfs;
+package org.apache.solr.schema;
 
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
@@ -17,54 +17,30 @@ package org.apache.solr.store.hdfs;
  * limitations under the License.
  */
 
-import java.io.IOException;
-
-import org.apache.lucene.store.IndexOutput;
+import org.apache.lucene.expressions.Expression;
+import org.apache.lucene.expressions.SimpleBindings;
+import org.apache.lucene.expressions.js.JavascriptCompiler;
+import org.apache.lucene.search.SortField;
 
 /**
- * @lucene.experimental
+ * Custom field wrapping an int, to test sorting via a custom comparator.
  */
-public class NullIndexOutput extends IndexOutput {
-  
-  private long pos;
-  private long length;
-  
-  @Override
-  public void close() throws IOException {
-    
-  }
-  
-  @Override
-  public void flush() throws IOException {
-    
-  }
-  
-  @Override
-  public long getFilePointer() {
-    return pos;
-  }
-  
-  @Override
-  public long length() throws IOException {
-    return length;
-  }
-  
-  @Override
-  public void writeByte(byte b) throws IOException {
-    pos++;
-    updateLength();
-  }
-  
-  @Override
-  public void writeBytes(byte[] b, int offset, int length) throws IOException {
-    pos += length;
-    updateLength();
-  }
-  
-  private void updateLength() {
-    if (pos > length) {
-      length = pos;
+public class WrappedIntField extends TrieIntField {
+  Expression expr;
+
+  public WrappedIntField() {
+    try {
+      expr = JavascriptCompiler.compile("payload % 3");
+    } catch (Exception e) {
+      throw new RuntimeException("impossible?", e);
     }
   }
-  
+
+  @Override
+  public SortField getSortField(final SchemaField field, final boolean reverse) {
+    field.checkSortability();
+    SimpleBindings bindings = new SimpleBindings();
+    bindings.add(super.getSortField(field, reverse));
+    return expr.getSortField(bindings, reverse);
+  }
 }
